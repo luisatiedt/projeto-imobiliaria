@@ -78,6 +78,42 @@ function calculateGoldCustomers(results, goldValue) {
   return goldCustomers;
 }
 
+function groupSalesByMonthAndYear(pagamento) {
+  const salesByMonthAndYear = {};
+
+  // Percorre cada venda no array
+  for (const sale of pagamento) {
+    const date = new data_do_pagamento(pagamento.date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // Os meses em JavaScript são de 0 a 11
+
+    // Cria uma chave no objeto salesByMonthAndYear no formato "YYYY-MM"
+    const key = `${year}-${month.toString().padStart(2, '0')}`;
+
+    // Se a chave não existe, cria um novo objeto para armazenar as vendas
+    if (!salesByMonthAndYear[key]) {
+      salesByMonthAndYear[key] = {
+        year: year,
+        month: month,
+        totalSales: 0,
+      };
+    }
+
+    // Adiciona o valor da venda ao total de vendas do mês/ano correspondente
+    salesByMonthAndYear[key].totalSales += sale.amount;
+  }
+
+  // Converte o objeto em um array de resultados
+  const result = Object.values(salesByMonthAndYear);
+
+  return result;
+}
+
+// Chame a função e imprima o resultado
+const monthlySales = groupSalesByMonthAndYear(pagamento);
+console.log(monthlySales);
+
+
 app.listen(port, () => {
   console.log(`Servidor iniciado na porta ${port}`);
 });
